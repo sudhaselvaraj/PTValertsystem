@@ -1,0 +1,54 @@
+import urllib2
+import os
+import logging
+import time
+import datetime
+import sys
+
+logger = logging.getLogger('PSVT')
+now = datetime.datetime.now()
+
+log_file = os.path.join(os.getcwd(), "%s_results_%s.log" %(sys.argv[1], now.strftime('%Y%m%d%H%M%S%f')))
+hdlr = logging.FileHandler(log_file)
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
+
+class TestSiaTool():
+    @classmethod
+    def test_api_endpoint(self):
+        file_path = os.path.join(os.getcwd(), sys.argv[1] + ".txt")
+        pasvt_id_list = open(file_path, "r").readlines()
+        passed = 0
+        failed = 0
+        start = datetime.datetime.now()
+        logger.info("Starting test script at : %s" %start)
+        start_time = time.time()
+        for asset_id in pasvt_id_list:
+            start = time.time()
+            try:
+                api_url = "URL" 
+                request = urllib2.urlopen(api_url)
+                end = time.time() - start
+                log_string = "Asset Id :%s" %((asset_id).strip()) + " " + "Status :%s" %(str(request.getcode()))+ " " + "Took :%s" %end
+                logger.info(log_string)
+                passed +=1
+            except Exception as reason:
+                end = time.time() - start
+                error_msg = "Asset Id :%s" %((asset_id).strip()) + " " + "Reason :%s" %str(reason) + " " + "Took :%s" %end
+                logger.error(error_msg)
+                failed +=1
+                pass
+        end_time = time.time()
+        result = "Total requets : %s , Total Passed : %s, Total Failed : %s, Took %s" %(str(passed+failed), str(passed), str(failed), end_time - start_time)
+        logger.info(result)
+        end_date_time = datetime.datetime.now()
+        logger.info("Ending Test Script at %s" %end_date_time)
+
+if __name__ == "__main__":
+    TestSiaTool.test_api_endpoint()
+
+
+
+
